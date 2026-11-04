@@ -117,3 +117,94 @@ Hyperparameter tuning and cross-validation provide a more robust basis for selec
 ### Open Blockers
 
 No open blockers for the Day 3 increment.
+
+# Day 4 - Feature Engineering and Ensemble Models
+
+## Objective
+
+The objective of Day 4 was to improve the RetailMind customer churn prediction pipeline using feature engineering and ensemble learning techniques.
+
+## Feature Engineering
+
+New domain-based features were created from the existing Telco Customer Churn dataset:
+
+- Tenure buckets
+- New customer flag
+- Long-term customer flag
+- Average charge per tenure
+- Monthly-to-total charge ratio
+- Number of active services
+- Protection service flag
+- Month-to-month contract flag
+- Long-term contract flag
+- Electronic check payment flag
+- Paperless billing flag
+
+These engineered features provide additional information that may help the models identify customers with a higher likelihood of churn.
+
+## Ensemble Models
+
+Two ensemble models were trained and evaluated:
+
+1. Random Forest Classifier
+2. XGBoost Classifier
+
+Random Forest represents a bagging-based ensemble approach, while XGBoost represents a boosting-based ensemble approach.
+
+## Model Comparison
+
+| Model | Accuracy | Precision | Recall | F1 Score | ROC-AUC |
+|---|---:|---:|---:|---:|---:|
+| Random Forest | 0.7807 | 0.5827 | 0.6123 | 0.5971 | 0.8339 |
+| XGBoost | 0.7913 | 0.6342 | 0.5053 | 0.5625 | 0.8428 |
+
+## Final Model Selection
+
+**XGBoost was selected as the Day 4 champion model.**
+
+XGBoost achieved the highest ROC-AUC score of **0.8428**, along with the highest accuracy and precision among the Day 4 models.
+
+Random Forest achieved a higher recall of **0.6123** and a higher F1 score of **0.5971**, showing that the choice of model can depend on the business objective. For this implementation, ROC-AUC was used as the primary model-selection metric.
+
+## Saved Model
+
+The complete feature-engineering, preprocessing, and trained champion pipeline was saved as:
+
+`models/churn_champion_day4.joblib`
+
+The Day 4 model metrics and champion information were saved as:
+
+`models/day4_metrics.json`
+
+The saved model was successfully reloaded and tested to confirm that it can generate both churn predictions and churn probabilities.
+
+## Business Value
+
+The Day 4 pipeline improves churn-risk modelling by combining customer tenure, contract behaviour, service usage, payment behaviour, and charge-related information.
+
+Churn probabilities can be used to rank customers by predicted churn risk. This can support targeted retention campaigns where higher-risk customers are prioritised for intervention.
+
+## Day 4 Project Updates
+
+New files added:
+
+- `notebooks/day4_feature_engineering_ensembles.ipynb`
+- `src/features.py`
+- `src/train_day4.py`
+
+Generated model artifacts:
+
+- `models/churn_champion_day4.joblib`
+- `models/day4_metrics.json`
+
+## Day 4 Summary
+
+- Implemented domain-based feature engineering
+- Added reusable feature-engineering code
+- Trained a Random Forest bagging model
+- Trained an XGBoost boosting model
+- Compared models using Accuracy, Precision, Recall, F1 Score, and ROC-AUC
+- Selected XGBoost as the Day 4 champion based primarily on ROC-AUC
+- Saved the complete production pipeline
+- Verified that the saved model can be reloaded and used for churn prediction
+
