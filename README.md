@@ -261,3 +261,60 @@ The benchmark shows that model complexity should be chosen according to the busi
 ### Open Blockers
 
 No open blockers for the Day 5 increment.
+
+## Day 6 - CNN Image Classification
+
+This increment adds RetailMind's first computer-vision module: a convolutional neural network that classifies product images into catalog categories.
+
+### Prototype Dataset
+
+The CNN was prototyped on Fashion-MNIST to validate the image-classification architecture before extending the vision workflow to real Fashion Product Images.
+
+### Image Pipeline
+
+- Normalised image pixel values
+- Added lightweight image augmentation
+- Used `Conv2D` layers for feature extraction
+- Used `MaxPooling2D` for spatial reduction
+- Used `Dropout` to reduce overfitting
+- Used Dense layers for classification
+- Used a 10-class softmax output
+
+### CNN Results
+
+- Epochs run: **15**
+- Best validation accuracy: **0.8903**
+- Test accuracy: **0.8854**
+- Test loss: **0.3143**
+
+### Confusion-Matrix Findings
+
+The confusion matrix shows that the largest errors occur between visually similar clothing categories.
+
+Top observed category confusions:
+
+1. `T-shirt/top -> Shirt: 136`
+2. `Coat -> Shirt: 104`
+3. `Pullover -> Shirt: 101`
+4. `Shirt -> T-shirt/top: 101`
+5. `Coat -> Pullover: 82`
+
+These results indicate that upper-body clothing categories such as shirts, T-shirts, coats, and pullovers are the most difficult for the current CNN to distinguish.
+
+### Saved Artifact
+
+The first RetailMind computer-vision classifier is saved as:
+
+`models/catalog_cnn.keras`
+
+### Connection to Earlier Increments
+
+Earlier RetailMind increments focused on tabular customer-churn prediction. Day 6 adds a separate computer-vision capability for product images, extending the same RetailMind codebase toward automatic catalog tagging and future visual-search workflows.
+
+### Business Value
+
+The CNN reached **88.54% test accuracy**, demonstrating that RetailMind can automatically assign image-based product categories with useful prototype performance. Automated categorisation can reduce manual cataloguing effort, while the confusion analysis identifies visually similar categories that could benefit from more representative product images, stronger augmentation, or the transfer-learning work planned for the next increment.
+
+### Open Blockers
+
+No open blockers for the Day 6 increment.
