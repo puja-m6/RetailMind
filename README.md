@@ -208,3 +208,56 @@ Generated model artifacts:
 - Saved the complete production pipeline
 - Verified that the saved model can be reloaded and used for churn prediction
 
+## Day 5 - Neural Networks & ANN (Keras)
+
+This increment introduces a Keras feed-forward artificial neural network for customer churn and benchmarks it head-to-head against the versioned classical ML champion from the earlier RetailMind increments.
+
+### ANN Architecture
+
+- Normalised numerical inputs and one-hot encoded categorical inputs
+- Dense hidden layer: 64 units, ReLU activation
+- Dense hidden layer: 32 units, ReLU activation
+- Output layer: 1 unit, sigmoid activation
+- Optimizer: Adam
+- Loss: Binary cross-entropy
+- Early stopping: monitor validation loss, patience of 5 epochs, restore best weights
+
+### ANN Training
+
+- Epochs run: 8
+- Best validation loss: 0.4277
+
+### ANN vs Classical Champion
+
+| Model | Accuracy | Precision | Recall | ROC-AUC |
+|---|---:|---:|---:|---:|
+| Classical Champion | 0.7896 | 0.6021 | 0.6150 | 0.8289 |
+| Keras ANN | 0.7946 | 0.6557 | 0.4786 | 0.8337 |
+
+### When to Use Which
+
+- **Classical champion:** Prefer when churn recall is the priority. It detected a substantially larger proportion of churn cases, with recall of 0.6150 compared with 0.4786 for the ANN.
+- **Keras ANN:** The ANN produced slightly higher accuracy (0.7946 vs 0.7896), precision (0.6557 vs 0.6021), and ROC-AUC (0.8337 vs 0.8289). It is useful when those metrics and a neural-network architecture are more important than maximizing churn recall.
+- **Day 5 conclusion:** The ANN did not clearly replace the classical champion for RetailMind's churn objective. Although the ANN marginally improved accuracy and ROC-AUC, the classical champion retained a major advantage in churn recall, which has been the project's primary business metric for identifying at-risk customers.
+
+### Saved Artifacts
+
+The trained ANN is saved as:
+
+`models/churn_ann.keras`
+
+The fitted preprocessing needed to reproduce ANN inputs is saved as:
+
+`models/churn_ann_preprocessor.joblib`
+
+### Connection to Earlier Increments
+
+Day 5 keeps the existing RetailMind churn dataset and directly benchmarks deep learning against the previously versioned classical churn champion. This tests whether neural-network depth adds measurable value instead of automatically replacing the simpler classical approach.
+
+### Business Value
+
+The benchmark shows that model complexity should be chosen according to the business objective rather than accuracy alone. For churn intervention, the classical champion remains preferable because its recall is 0.1364 higher than the ANN's, while the ANN demonstrates modest gains in accuracy, precision, and ROC-AUC.
+
+### Open Blockers
+
+No open blockers for the Day 5 increment.
