@@ -318,3 +318,112 @@ The CNN reached **88.54% test accuracy**, demonstrating that RetailMind can auto
 ### Open Blockers
 
 No open blockers for the Day 6 increment.
+
+## Day 7 - Transfer Learning & Object Detection
+
+This increment upgrades RetailMind's computer-vision capability by introducing transfer learning with a pretrained MobileNetV2 model and object detection using YOLO.
+
+### Transfer Learning with MobileNetV2
+
+An ImageNet-pretrained MobileNetV2 backbone was used as a lightweight transfer-learning model suitable for the resource-constrained work-laptop environment.
+
+The pretrained backbone was initially frozen while a new classification head was trained. The upper MobileNetV2 layers were then fine-tuned using a lower learning rate.
+
+A reduced Fashion-MNIST subset and smaller image/batch sizes were used to keep the experiment practical on the available CPU-only environment.
+
+### Classification Results
+
+| Model | Test Accuracy |
+|---|---:|
+| Day 6 Custom CNN | 0.8854 |
+| MobileNetV2 Transfer Learning | 0.8180 |
+
+- Accuracy change: **-0.0674**
+- MobileNetV2 test loss: **0.5175**
+
+The Day 6 custom CNN outperformed MobileNetV2 by approximately **6.74 percentage points** on this experiment.
+
+Transfer learning therefore did not improve classification accuracy in this specific setup. Possible contributing factors include the difference between ImageNet-style RGB images and the small grayscale Fashion-MNIST images, as well as the deliberately reduced training dataset used to accommodate the available hardware resources.
+
+### Saved Transfer-Learning Model
+
+The trained MobileNetV2 classifier was saved as:
+
+`models/catalog_transfer_mobilenetv2.keras`
+
+The transfer-learning metrics were saved as:
+
+`models/day7_mobilenet_metrics.json`
+
+### YOLO Object Detection
+
+A pretrained YOLO detector was used to extend RetailMind from image-level classification to object localization.
+
+The detector was tested on:
+
+`data/product_images/sample.jpg`
+
+### Detection Result
+
+- Images processed: **1**
+- Bounding boxes detected: **1**
+- Detected class: **suitcase**
+- Confidence: **0.532 (53.2%)**
+- Bounding box: **[90.1, 204.3, 164.5, 272.1]**
+
+YOLO successfully localized an object in the retail image and placed a bounding box around it.
+
+However, several other visible fashion products were not detected. This highlights a limitation of using a general-purpose pretrained object detector for specialized retail and fashion imagery.
+
+A future improvement could use a retail-specific object-detection dataset and fine-tune YOLO on classes such as bags, shoes, clothing, hats, and other catalog products.
+
+### Saved Object-Detection Artifacts
+
+Detection metadata was saved as:
+
+`models/day7_yolo_results.json`
+
+The annotated detection image was saved under:
+
+`models/yolo_predictions/day7/`
+
+### Resource-Constrained Execution
+
+Running TensorFlow/MobileNetV2 and PyTorch/YOLO together caused the Jupyter kernel to restart because of the limited resources available on the work laptop.
+
+To complete the increment reliably, the notebook was divided into two execution stages while remaining in the same notebook:
+
+1. Train, evaluate, and save MobileNetV2.
+2. Restart the Jupyter kernel to release TensorFlow resources.
+3. Continue from the YOLO section without rerunning MobileNetV2.
+4. Load the saved MobileNetV2 metrics when creating the final Day 7 summary.
+
+This allowed both transfer learning and object detection to be completed without removing either requirement.
+
+### Business Value
+
+Day 7 extends RetailMind beyond basic image classification.
+
+MobileNetV2 demonstrates how pretrained visual models can be adapted to RetailMind while using a relatively lightweight architecture.
+
+YOLO adds object localization, enabling future capabilities such as:
+
+- automatic catalog quality checks
+- identifying products within multi-product images
+- product counting
+- shelf-image analysis
+- locating products before further classification
+- retail-specific visual search workflows
+
+### Day 7 Conclusion
+
+The Day 6 custom CNN remained the stronger classifier for the current Fashion-MNIST experiment, achieving **88.54% accuracy compared with 81.80% for MobileNetV2**.
+
+MobileNetV2 nevertheless demonstrated the transfer-learning workflow with a substantially lighter architecture than ResNet50.
+
+YOLO successfully added object detection and bounding-box localization to RetailMind. The prototype detected one object as a suitcase with **53.2% confidence**, demonstrating the detection pipeline while also showing the need for retail-specific fine-tuning for more complete product recognition.
+
+### Open Blockers
+
+The current pretrained YOLO detector is general-purpose and does not reliably detect all fashion products in the catalog image. Retail-specific YOLO fine-tuning would be required for more complete and accurate product detection.
+

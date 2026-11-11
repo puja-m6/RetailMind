@@ -1,0 +1,10 @@
+{
+  "backbone": "MobileNetV2",
+  "day6_accuracy": 0.8854,
+  "transfer_accuracy": 0.8180000185966492,
+  "accuracy_change": -0.0673999814033508,
+  "test_loss": 0.5175434350967407,
+  "head_epochs": 3,
+  "fine_tune_epochs": 2,
+  "artifact": "models/catalog_transfer_mobilenetv2.keras"
+}

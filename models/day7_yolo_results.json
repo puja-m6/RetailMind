@@ -1,0 +1,18 @@
+{
+  "source": "data/product_images/sample.jpg",
+  "images_processed": 1,
+  "bounding_boxes": 1,
+  "detections": [
+    {
+      "class": "suitcase",
+      "confidence": 0.5319,
+      "box": [
+        90.1,
+        204.3,
+        164.5,
+        272.1
+      ]
+    }
+  ],
+  "output_folder": "models/yolo_predictions/day7"
+}
