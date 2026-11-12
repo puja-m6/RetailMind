@@ -427,3 +427,128 @@ YOLO successfully added object detection and bounding-box localization to Retail
 
 The current pretrained YOLO detector is general-purpose and does not reliably detect all fashion products in the catalog image. Retail-specific YOLO fine-tuning would be required for more complete and accurate product detection.
 
+## Day 8 - Segmentation & End-to-End Computer Vision
+
+This increment completes Phase 2 of RetailMind by adding product segmentation, background removal, clean catalog-image compositing, Grad-CAM explainability, and a packaged end-to-end computer-vision interface.
+
+### Input Image
+
+The Day 8 workflow processes:
+
+`data/product_images/sample.jpg`
+
+### Product Segmentation
+
+A lightweight segmentation approach was implemented using OpenCV GrabCut followed by morphological refinement.
+
+The workflow:
+
+1. Estimates foreground and background pixels with GrabCut.
+2. Converts the GrabCut result into a binary foreground mask.
+3. Applies morphological closing and opening to refine the mask.
+4. Uses the final mask to remove the original background.
+
+The foreground ratio was:
+
+**0.424**
+
+This means approximately **42.4%** of the image pixels were identified as foreground/product content.
+
+### Background Removal and Catalog Compositing
+
+The segmentation mask was used to create:
+
+- a transparent-background product image
+- a clean product image composited onto a uniform white background
+
+The generated catalog artifacts are:
+
+`models/day8_cv_outputs/product_mask.png`
+
+`models/day8_cv_outputs/product_transparent.png`
+
+`models/day8_cv_outputs/clean_catalog_white.jpg`
+
+### Classification Result
+
+The existing Day 7 MobileNetV2 transfer-learning classifier was reused for the Day 8 explainability workflow.
+
+- Classifier: **MobileNetV2 transfer classifier**
+- Predicted class: **Dress**
+- Prediction score: **0.3699 (36.99%)**
+
+The relatively low prediction score reflects the domain difference between the classifier's Fashion-MNIST training data and the real, multi-product retail image used for Day 8.
+
+### Grad-CAM Explainability
+
+Grad-CAM was added to show which image regions influenced the classifier's prediction.
+
+The MobileNetV2 feature layer used for Grad-CAM was:
+
+`out_relu`
+
+The Grad-CAM result is saved as:
+
+`models/day8_cv_outputs/gradcam_overlay.jpg`
+
+This overlay provides visual evidence of the regions that contributed to the model's classification decision, helping the catalog team review the model rather than relying only on a class label.
+
+### End-to-End CV Module
+
+Day 8 packages the computer-vision capabilities into one workflow that includes:
+
+- image classification
+- Day 7 object-detection metadata
+- product segmentation
+- background removal
+- uniform catalog-image compositing
+- Grad-CAM explainability
+
+The packaged module metadata is saved as:
+
+`models/day8_cv_module.json`
+
+The notebook exposes the combined result through the `retailmind_cv()` interface.
+
+### Connection to Earlier Increments
+
+Day 6 introduced the first CNN catalog classifier.
+
+Day 7 added MobileNetV2 transfer learning and YOLO object detection.
+
+Day 8 completes the Phase 2 computer-vision workflow by adding segmentation, clean-image generation, and explainability while reusing the earlier classifier and saved detection results.
+
+### Business Value
+
+This increment supports cleaner and more consistent retail catalog imagery by automatically separating product content from the original background and placing it on a uniform white background.
+
+Grad-CAM adds transparency by showing which image regions influenced the classifier. This helps catalog teams review questionable predictions and builds trust in model-assisted catalog decisions.
+
+The packaged CV workflow creates a foundation for:
+
+- automated catalog-image cleanup
+- consistent product presentation
+- explainable classification review
+- catalog quality assurance
+- combined classification, detection, and segmentation workflows
+
+### Limitations and Open Blockers
+
+GrabCut is a lightweight segmentation prototype rather than a retail-trained semantic or instance-segmentation model. Complex backgrounds, overlapping objects, and multiple products may produce imperfect boundaries.
+
+The MobileNetV2 classifier was trained using a reduced Fashion-MNIST experiment, while the Day 8 input is a real multi-product retail image. This domain shift contributed to the relatively low prediction score of **0.3699**.
+
+A future production version should use:
+
+- real fashion-product training images
+- product-level segmentation masks
+- a U-Net-style model or a pretrained semantic/instance segmenter
+- retail-specific classifier and detector fine-tuning
+- GPU-backed training for larger datasets and stronger models
+
+### Day 8 Conclusion
+
+Day 8 successfully produced a segmentation mask, transparent product image, clean white-background catalog image, and Grad-CAM explanation for the existing RetailMind classifier.
+
+All required outputs were saved and verified, and classification, detection metadata, segmentation, compositing, and explainability were packaged into one computer-vision module.
+
