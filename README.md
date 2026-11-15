@@ -692,4 +692,157 @@ Day 9 successfully converted store/item sales into a daily time series, generate
 
 The final model achieved an MAE of **4.5853**, an RMSE of **5.8225**, and predicted next-period demand of **17.57 units**.
 
+## Day 10 - Seq2Seq & Attention Forecasting
 
+This increment upgrades RetailMind's Day 9 single-step LSTM demand forecaster into a multi-horizon Seq2Seq model with attention.
+
+### Forecasting Objective
+
+Day 9 predicted one next-period demand value from the previous 30 days. Day 10 extends the demand module to predict the next **7 days** in one forecast while using attention to identify which historical demand periods influence each future step.
+
+### Model Design
+
+The model uses:
+
+- 30-day historical look-back window
+- LSTM encoder
+- LSTM decoder
+- Keras AdditiveAttention over encoder history
+- 7-day multi-horizon output
+- Adam optimizer
+- Mean squared error training loss
+- Early stopping using validation loss
+
+### Training Result
+
+- Look-back window: **30 days**
+- Forecast horizon: **7 days**
+- Epochs run: **18**
+
+### Multi-Horizon Forecast Evaluation
+
+| Metric | Result |
+|---|---:|
+| Overall 7-day MAE | 4.5754 |
+| Overall 7-day RMSE | 5.8059 |
+| Day +1 MAE | 4.5988 |
+| Day +1 RMSE | 5.8311 |
+
+The overall MAE indicates an average absolute forecast error of approximately **4.58 sales units** across the seven forecast horizons.
+
+### Comparison with Day 9
+
+| Metric | Day 9 Single-Step LSTM | Day 10 Seq2Seq Day +1 |
+|---|---:|---:|
+| MAE | 4.5853 | 4.5988 |
+| RMSE | 5.8225 | 5.8311 |
+
+The Day 10 Day +1 forecast is slightly less accurate than the dedicated Day 9 single-step model. However, Day 10 adds substantially more functionality by producing seven future demand values simultaneously and exposing attention weights for interpretability.
+
+The improvement in Day 10 is therefore primarily **forecast horizon and explainability**, rather than a one-step accuracy improvement.
+
+### Next 7-Day Demand Forecast
+
+The model produced the following demand outlook:
+
+| Forecast Horizon | Predicted Demand |
+|---|---:|
+| Day +1 | 16.86 |
+| Day +2 | 17.05 |
+| Day +3 | 17.28 |
+| Day +4 | 17.51 |
+| Day +5 | 17.74 |
+| Day +6 | 17.95 |
+| Day +7 | 18.13 |
+
+The forecast shows a gradual increase in expected demand from approximately **16.86 units to 18.13 units** over the seven-day horizon.
+
+### Attention Explainability
+
+The Seq2Seq decoder uses attention over the previous 30 days of demand history.
+
+For each forecast horizon, the notebook ranks the historical lags receiving the highest attention weights. This provides evidence of which past demand periods contribute most strongly to each future prediction.
+
+The saved attention output is:
+
+`models/day10_forecast_outputs/attention_weights.csv`
+
+This file can be used to inspect the highest-weighted historical periods for Day +1 through Day +7 forecasts.
+
+### Upgraded Demand Interface
+
+The Day 10 notebook provides:
+
+`forecast_multi_horizon(recent_sales)`
+
+The function accepts exactly 30 recent daily sales values and returns seven future demand predictions.
+
+This upgrades the Day 9 interface from:
+
+`30 historical days -> 1 future day`
+
+to:
+
+`30 historical days -> 7 future days`
+
+### Saved Artifacts
+
+The trained Seq2Seq + attention model was saved as:
+
+`models/demand_seq2seq_attention.keras`
+
+The Day 10 metrics were saved as:
+
+`models/day10_demand_metrics.json`
+
+The multi-horizon forecast results were saved as:
+
+`models/day10_forecast_outputs/multi_horizon_forecast.csv`
+
+The attention weights were saved as:
+
+`models/day10_forecast_outputs/attention_weights.csv`
+
+### Connection to Day 9
+
+Day 9 established RetailMind's initial next-period LSTM demand model using a 30-day look-back window.
+
+Day 10 reuses the persisted Day 9 daily demand series and expands the forecasting module into a Seq2Seq architecture capable of predicting multiple future periods. Attention adds interpretability by showing which historical demand lags receive the most weight for each forecast horizon.
+
+### Business Value
+
+The seven-day demand outlook provides inventory and procurement teams with more planning lead time than a one-day forecast.
+
+The module can support:
+
+- multi-day replenishment planning
+- procurement timing
+- promotion planning
+- inventory allocation
+- stockout prevention
+- overstock reduction
+- identification of rising or falling short-term demand patterns
+
+The attention mechanism also improves model transparency by showing which recent demand periods contribute to each prediction.
+
+### Limitations and Open Blockers
+
+The current Phase 3 prototype still models a single store/item demand series.
+
+The model currently uses historical sales only and does not yet include external demand drivers such as:
+
+- promotions
+- pricing
+- holidays
+- weather
+- store closures
+- product availability
+- regional events
+
+The Day +1 Seq2Seq forecast was also slightly less accurate than the Day 9 dedicated single-step LSTM. Future tuning should therefore evaluate architecture size, look-back length, forecast horizon, attention configuration, and additional demand features rather than assuming that a more complex architecture always improves accuracy.
+
+### Day 10 Conclusion
+
+Day 10 successfully upgraded RetailMind from single-step demand forecasting to a seven-day Seq2Seq forecasting module with attention.
+
+The model achieved an overall MAE of **4.5754** and RMSE of **5.8059** across the seven-day horizon. It generated a demand outlook rising from **16.86 units on Day +1 to 18.13 units on Day +7** and persisted attention weights that explain which historical demand periods influenced each forecast.

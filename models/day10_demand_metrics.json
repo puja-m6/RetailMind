@@ -1,0 +1,33 @@
+{
+  "lookback_days": 30,
+  "forecast_horizon_days": 7,
+  "epochs_run": 18,
+  "best_validation_loss": 0.7340186834335327,
+  "overall_mae": 4.575441360473633,
+  "overall_rmse": 5.805915832519531,
+  "day1_mae": 4.598841667175293,
+  "day1_rmse": 5.831099033355713,
+  "per_horizon_mae": [
+    4.598841667175293,
+    4.578036308288574,
+    4.603947162628174,
+    4.616415977478027,
+    4.547615051269531,
+    4.538277626037598,
+    4.544955730438232
+  ],
+  "per_horizon_rmse": [
+    5.831099033355713,
+    5.815681457519531,
+    5.839955806732178,
+    5.8482747077941895,
+    5.790897369384766,
+    5.750771999359131,
+    5.76397705078125
+  ],
+  "day9_mae": 4.585292339324951,
+  "day9_rmse": 5.822495460510254,
+  "model": "models/demand_seq2seq_attention.keras",
+  "forecast_file": "models/day10_forecast_outputs/multi_horizon_forecast.csv",
+  "attention_file": "models/day10_forecast_outputs/attention_weights.csv"
+}
