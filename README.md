@@ -552,3 +552,144 @@ Day 8 successfully produced a segmentation mask, transparent product image, clea
 
 All required outputs were saved and verified, and classification, detection metadata, segmentation, compositing, and explainability were packaged into one computer-vision module.
 
+## Day 9 - RNN / LSTM Demand Forecasting
+
+This increment starts Phase 3 of RetailMind by adding a next-period demand-forecasting module for store and product sales.
+
+### Dataset and Time Series
+
+The model uses the **Store Item Demand** dataset with the columns:
+
+- `date`
+- `store`
+- `item`
+- `sales`
+
+The Day 9 prototype forecasts the series:
+
+`store_1.0_item_1.0`
+
+The sales records were sorted by date and resampled into a clean daily demand series using pandas.
+
+### Supervised Forecasting Windows
+
+A **30-day look-back window** was used.
+
+Each training example follows this structure:
+
+`previous 30 days of sales -> next-day sales`
+
+The series was scaled using statistics calculated only from the training period.
+
+### Time-Series Split
+
+The split was chronological rather than random so that the model learned from earlier observations and was evaluated on future demand.
+
+- Training observations: **1460**
+- Test observations: **366**
+
+The most recent observations were held out for testing.
+
+### LSTM Architecture
+
+The forecasting model contains:
+
+- LSTM layer with 32 units
+- Dropout layer with rate 0.20
+- Dense hidden layer with 16 ReLU units
+- Final Dense layer with one output for next-period demand
+- Adam optimizer
+- Mean squared error training loss
+- Early stopping using validation loss
+
+### Training Result
+
+- Epochs run: **20**
+- Look-back period: **30 days**
+
+### Forecast Evaluation
+
+| Metric | Result |
+|---|---:|
+| MAE | 4.5853 |
+| RMSE | 5.8225 |
+
+The MAE indicates that the forecast differed from actual demand by approximately **4.59 sales units on average**.
+
+The RMSE of **5.8225** gives greater weight to larger forecast errors and provides an additional measure of forecast reliability.
+
+### Next-Period Forecast
+
+Using the latest 30-day demand window, the model predicted next-period demand of:
+
+**17.57 units**
+
+This value can be used as an initial demand signal for inventory and replenishment planning.
+
+### Saved Artifacts
+
+The trained LSTM forecaster was saved as:
+
+`models/demand_lstm.keras`
+
+The forecast metrics were saved as:
+
+`models/day9_demand_metrics.json`
+
+The cleaned daily demand series was saved as:
+
+`models/day9_forecast_outputs/daily_demand_series.csv`
+
+The actual-versus-predicted test output was saved as:
+
+`models/day9_forecast_outputs/demand_forecast.csv`
+
+### Demand Module Interface
+
+The notebook provides the function:
+
+`forecast_next_period(recent_sales)`
+
+The function accepts exactly 30 recent daily sales values and returns the next-period sales forecast.
+
+### Connection to Earlier Increments
+
+Days 6 to 8 developed RetailMind's computer-vision catalog capabilities.
+
+Day 9 begins Phase 3 by adding time-series demand forecasting to the same RetailMind platform. This expands RetailMind from customer and catalog intelligence into inventory-planning support.
+
+### Business Value
+
+The LSTM demand module provides a forward-looking sales signal that can support:
+
+- inventory reorder decisions
+- stockout reduction
+- overstock reduction
+- store and product planning
+- replenishment prioritisation
+- future safety-stock calculations
+
+A forecast of **17.57 units** for the next period gives inventory teams a measurable starting point for operational planning.
+
+### Limitations and Open Blockers
+
+The Day 9 prototype forecasts only one store/item series and performs one-step-ahead prediction.
+
+The current model does not yet include external factors such as:
+
+- promotions
+- pricing
+- holidays
+- weather
+- store closures
+- product availability
+
+The next increment can extend the module to multi-horizon forecasting using a Seq2Seq model with attention and can support multiple store/product series.
+
+### Day 9 Conclusion
+
+Day 9 successfully converted store/item sales into a daily time series, generated 30-day supervised windows, trained an LSTM, evaluated future-period predictions with MAE and RMSE, and saved the model and forecast outputs.
+
+The final model achieved an MAE of **4.5853**, an RMSE of **5.8225**, and predicted next-period demand of **17.57 units**.
+
+

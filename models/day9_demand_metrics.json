@@ -1,0 +1,13 @@
+{
+  "dataset": "Store Item Demand",
+  "series": "store_1.0_item_1.0",
+  "lookback_days": 30,
+  "train_observations": 1460,
+  "test_observations": 366,
+  "epochs_run": 20,
+  "best_validation_loss": 0.716895341873169,
+  "mae": 4.585292339324951,
+  "rmse": 5.822495460510254,
+  "model": "models/demand_lstm.keras",
+  "forecast_output": "models/day9_forecast_outputs/demand_forecast.csv"
+}
