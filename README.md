@@ -924,3 +924,143 @@ Synthetic images can strengthen thin product categories without collecting and l
 - The experiment uses 28x28 Fashion-MNIST images, so VAE output is blurry. A real version should use the Kaggle Fashion Product Images dataset.
 - The realism check only compares average brightness, which is a basic filter. Stronger checks or human review would be needed before synthetic images enter a real catalog.
 - Results are from one run; repeating with different seeds would show how stable the improvement is.
+
+## Day 12 - NLP & Classical Sentiment Baseline
+
+This increment adds RetailMind's first natural-language processing module for converting Amazon product reviews into sentiment signals and customer-feedback insights.
+
+### Dataset
+
+The sentiment baseline used a balanced subset of the Amazon Polarity review dataset containing:
+
+- **20,000 Amazon product reviews**
+- **10,000 negative reviews**
+- **10,000 positive reviews**
+
+### Text Processing Pipeline
+
+Each review passed through the following preprocessing steps:
+
+1. Convert text to lowercase.
+2. Remove HTML and non-alphabetic noise.
+3. Tokenize the review using NLTK.
+4. Remove English stopwords.
+5. Convert the cleaned reviews into TF-IDF features.
+
+The TF-IDF representation included both single words and two-word phrases.
+
+### Classical Sentiment Model
+
+A **Logistic Regression** classifier was trained on the TF-IDF review features to provide a transparent classical sentiment baseline.
+
+### Evaluation Results
+
+| Metric | Result |
+|---|---:|
+| Accuracy | **0.8718** |
+| Precision | **0.8668** |
+| Recall | **0.8785** |
+| F1-score | **0.8726** |
+
+The model achieved **87.18% accuracy** on the held-out Amazon review test set, with precision, recall, and F1-score all close to 87%.
+
+### Sentiment Confusion Matrix
+
+The notebook includes a confusion-matrix visual for negative and positive reviews. This provides a direct view of correct classifications and sentiment errors rather than relying only on a single accuracy score.
+
+### Informative Positive Terms
+
+The strongest positive TF-IDF terms identified by the Logistic Regression model included:
+
+- `great`
+- `excellent`
+- `love`
+- `best`
+- `perfect`
+- `easy`
+- `awesome`
+- `favorite`
+
+These terms provide interpretable examples of language associated with positive customer sentiment.
+
+### Informative Negative Terms
+
+The strongest negative terms included:
+
+- `boring`
+- `disappointed`
+- `worst`
+- `disappointing`
+- `waste`
+- `terrible`
+- `poor`
+- `money`
+
+These terms can help RetailMind surface recurring dissatisfaction themes and product-quality concerns from review text.
+
+### Reusable Sentiment Interface
+
+The notebook provides:
+
+`predict_sentiment(review)`
+
+The function accepts a new review and returns:
+
+- predicted sentiment: positive or negative
+- prediction confidence
+
+This packages the classical NLP pipeline into a reusable review-processing interface for later RetailMind increments.
+
+### Saved Artifacts
+
+The fitted Logistic Regression sentiment classifier is saved as:
+
+`models/day12_sentiment_logreg.pkl`
+
+The fitted TF-IDF vectorizer is saved as:
+
+`models/day12_tfidf.pkl`
+
+The evaluation metrics are saved as:
+
+`models/day12_nlp_metrics.json`
+
+The most informative sentiment terms are saved as:
+
+`models/day12_nlp_outputs/informative_terms.json`
+
+### Connection to Earlier Increments
+
+Earlier RetailMind phases added customer churn prediction, computer vision, demand forecasting, and synthetic image augmentation.
+
+Day 12 begins the NLP capability by converting free-text customer reviews into structured positive/negative sentiment signals and interpretable product-feedback terms.
+
+### Business Value
+
+The sentiment module provides a scalable way to convert large volumes of customer review text into measurable feedback signals.
+
+RetailMind can use these signals to support:
+
+- customer-satisfaction monitoring
+- product issue discovery
+- identification of recurring positive product attributes
+- review prioritisation
+- catalog and merchandising decisions
+- future sentiment dashboards and trend analysis
+
+The informative terms also give business users a simple explanation of which words are most strongly associated with customer satisfaction or dissatisfaction.
+
+### Limitations and Open Blockers
+
+The TF-IDF + Logistic Regression baseline does not deeply understand context, word order, sarcasm, or nuanced language.
+
+For example, phrases with negation or complex context may be harder for a bag-of-words-style representation to understand correctly.
+
+A future transformer/BERT increment can be compared directly against this classical baseline to determine whether richer contextual language modeling produces a meaningful improvement.
+
+### Day 12 Conclusion
+
+Day 12 successfully created RetailMind's first classical NLP sentiment module using Amazon product reviews, NLTK preprocessing, TF-IDF features, and Logistic Regression.
+
+The model achieved **87.18% accuracy**, **86.68% precision**, **87.85% recall**, and an **87.26% F1-score**. The pipeline also surfaced interpretable positive and negative review terms and persisted the trained model and vectorizer for reuse in later NLP increments.
+
