@@ -846,3 +846,81 @@ The Day +1 Seq2Seq forecast was also slightly less accurate than the Day 9 dedic
 Day 10 successfully upgraded RetailMind from single-step demand forecasting to a seven-day Seq2Seq forecasting module with attention.
 
 The model achieved an overall MAE of **4.5754** and RMSE of **5.8059** across the seven-day horizon. It generated a demand outlook rising from **16.86 units on Day +1 to 18.13 units on Day +7** and persisted attention weights that explain which historical demand periods influenced each forecast.
+
+## Day 11 - GANs & VAEs: Image Augmentation
+
+This increment uses a Variational Autoencoder (VAE) to generate synthetic product images for a category the classifier struggles with, adds them to the training data, and re-measures per-class accuracy.
+
+### Weak Category
+
+The Day 6 confusion matrix showed that **Shirt** was confused most often with T-shirt/top, Pullover and Coat, so Shirt was chosen as the target category.
+
+Fashion-MNIST has the same number of images for every class, so Shirt was deliberately made a thin category:
+
+- Shirt: **600** real images
+- Every other class: up to **3000** real images
+
+### VAE
+
+A small VAE (encoder and decoder) was trained on the 600 real Shirt images only, with a 16-number latent space, for 50 epochs.
+
+After training, **1000** random latent vectors were passed through the decoder to generate new Shirt images.
+
+### Quality Check
+
+The generated images were inspected visually. Only realistic images were kept: an image was kept if its average brightness fell between the 5th and 95th percentile of the real Shirt images. The notebook kept **300 of the 1000** generated images (the notebook caps the kept set at 300) and added them to the training set, labelled as Shirt.
+
+The real, generated and kept images are saved in `models/day11_augmentation_outputs/`.
+
+### Per-Class Accuracy Before and After
+
+The same CNN architecture and the same starting seed were used both times, so the only difference is the added synthetic Shirt images.
+
+| Class | Before | After | Change |
+|---|---:|---:|---:|
+| T-shirt/top | 0.9530 | 0.9390 | -0.0140 |
+| Trouser | 0.9600 | 0.9750 | +0.0150 |
+| Pullover | 0.7610 | 0.8250 | +0.0640 |
+| Dress | 0.8640 | 0.9130 | +0.0490 |
+| Coat | 0.9220 | 0.8970 | -0.0250 |
+| Sandal | 0.9700 | 0.9810 | +0.0110 |
+| **Shirt (target)** | **0.1670** | **0.2180** | **+0.0510** |
+| Sneaker | 0.9710 | 0.9570 | -0.0140 |
+| Bag | 0.9820 | 0.9550 | -0.0270 |
+| Ankle boot | 0.9570 | 0.9430 | -0.0140 |
+
+| Metric | Before | After | Change |
+|---|---:|---:|---:|
+| Shirt accuracy | 0.1670 | 0.2180 | +0.0510 |
+| Overall accuracy | 0.8507 | 0.8603 | +0.0096 |
+
+### Fairness and Accuracy Lift
+
+Shirt accuracy improved from **16.7% to 21.8%** after augmentation, and overall accuracy rose slightly from **85.07% to 86.03%** (+0.0096).
+
+Pullover (+0.0640), Dress (+0.0490), Trouser (+0.0150) and Sandal (+0.0110) also improved. T-shirt/top, Coat, Sneaker, Bag and Ankle boot each dropped by between 0.0140 and 0.0270.
+
+Shirt accuracy is still very low, so augmentation reduced the gap but did not fix the weak category. These numbers come from a single training run, so small differences of a few percentage points may partly be random variation.
+
+### Saved Artifacts
+
+- `models/day11_vae_decoder.keras` - the trained VAE decoder used to generate images
+- `models/day11_augmented_classifier.keras` - the classifier trained with the synthetic Shirt images
+- `models/day11_augmentation_metrics.json` - the before/after results
+- `models/day11_augmentation_outputs/real_shirts.png`
+- `models/day11_augmentation_outputs/generated_shirts.png`
+- `models/day11_augmentation_outputs/kept_shirts.png`
+
+### Connection to Earlier Increments
+
+Day 6 built the CNN catalog classifier and produced the confusion matrix that identified Shirt as the weak category. Day 11 uses that finding to generate extra training images and tests whether they improve the same kind of classifier.
+
+### Business Value
+
+Synthetic images can strengthen thin product categories without collecting and labelling new photos. Measuring accuracy per class before and after shows whether the extra data actually helps each category, instead of assuming it does.
+
+### Open Blockers
+
+- The experiment uses 28x28 Fashion-MNIST images, so VAE output is blurry. A real version should use the Kaggle Fashion Product Images dataset.
+- The realism check only compares average brightness, which is a basic filter. Stronger checks or human review would be needed before synthetic images enter a real catalog.
+- Results are from one run; repeating with different seeds would show how stable the improvement is.

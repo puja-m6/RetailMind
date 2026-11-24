@@ -1,0 +1,36 @@
+{
+  "target_class": "Shirt",
+  "real_shirts_used": 600,
+  "generated": 1000,
+  "kept": 300,
+  "shirt_accuracy_before": 0.167,
+  "shirt_accuracy_after": 0.218,
+  "shirt_accuracy_change": 0.05099999999999999,
+  "overall_accuracy_before": 0.8507000207901001,
+  "overall_accuracy_after": 0.8603000044822693,
+  "overall_accuracy_change": 0.00959998369216919,
+  "before_per_class": [
+    0.953,
+    0.96,
+    0.761,
+    0.864,
+    0.922,
+    0.97,
+    0.167,
+    0.971,
+    0.982,
+    0.957
+  ],
+  "after_per_class": [
+    0.939,
+    0.975,
+    0.825,
+    0.913,
+    0.897,
+    0.981,
+    0.218,
+    0.957,
+    0.955,
+    0.943
+  ]
+}
