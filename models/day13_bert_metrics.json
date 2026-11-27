@@ -1,0 +1,21 @@
+{
+  "backbone": "distilbert-base-uncased",
+  "sentiment_train_reviews": 3200,
+  "sentiment_test_reviews": 800,
+  "day12_accuracy": 0.87175,
+  "bert_sentiment_accuracy": 0.9025,
+  "accuracy_lift": 0.030749999999999944,
+  "ticket_accuracy": 0.79,
+  "ticket_classes": [
+    "delivery",
+    "product_quality",
+    "refund_return",
+    "general_support"
+  ],
+  "ticket_per_class_accuracy": [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+  ]
+}

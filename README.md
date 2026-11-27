@@ -1064,3 +1064,120 @@ Day 12 successfully created RetailMind's first classical NLP sentiment module us
 
 The model achieved **87.18% accuracy**, **86.68% precision**, **87.85% recall**, and an **87.26% F1-score**. The pipeline also surfaced interpretable positive and negative review terms and persisted the trained model and vectorizer for reuse in later NLP increments.
 
+## Day 13 - BERT Text Intelligence
+
+This increment upgrades RetailMind's classical Day 12 NLP sentiment baseline with a pretrained DistilBERT model and adds support-ticket routing using the same transformer-based text intelligence approach.
+
+### BERT Backbone
+
+The Day 13 module uses:
+
+`distilbert-base-uncased`
+
+DistilBERT provides contextual text understanding, allowing RetailMind to move beyond the TF-IDF representation used in Day 12.
+
+### Sentiment Classification Results
+
+| Model | Accuracy |
+|---|---:|
+| Day 12 TF-IDF + Logistic Regression | 0.8718 |
+| Day 13 DistilBERT | 0.9025 |
+
+The BERT sentiment model improved accuracy from **87.18% to 90.25%**.
+
+The measured accuracy lift was:
+
+**+0.0307**, or approximately **3.07 percentage points**.
+
+This shows that contextual transformer features improved sentiment classification over the classical TF-IDF baseline in this experiment.
+
+### Sentiment Evaluation
+
+The notebook includes a sentiment confusion-matrix visual for negative and positive Amazon reviews. This makes the BERT classification errors visible in addition to the overall accuracy score.
+
+### Support-Ticket Routing
+
+The same pretrained DistilBERT approach was extended to support-ticket classification.
+
+Negative review text was reframed into support categories such as:
+
+- delivery
+- product quality
+- refund / return
+- general support
+
+The resulting ticket-routing classifier achieved an overall accuracy of:
+
+**0.7900 (79.00%)**
+
+The notebook also evaluates ticket-routing performance per class and displays a routing confusion matrix.
+
+### BERT-Powered Interfaces
+
+Day 13 replaces the classical sentiment interface with:
+
+`predict_sentiment_bert(review)`
+
+This function returns the BERT-based sentiment prediction and confidence for a new review.
+
+The notebook also provides:
+
+`route_ticket(review)`
+
+This function predicts the support queue for a review or support-style text.
+
+### Saved Artifacts
+
+The BERT sentiment module is saved under:
+
+`models/day13_bert_sentiment/`
+
+The ticket-routing module is saved under:
+
+`models/day13_bert_ticket_router/`
+
+Day 13 evaluation results are saved in:
+
+`models/day13_bert_metrics.json`
+
+### Connection to Day 12
+
+Day 12 established the classical NLP baseline using NLTK preprocessing, TF-IDF features, and Logistic Regression.
+
+Day 13 directly compares transformer-based sentiment classification against that baseline and then extends the NLP capability into support-ticket routing.
+
+This keeps the NLP evolution measurable rather than replacing the classical model without evidence.
+
+### Business Value
+
+The sentiment accuracy increase from **87.18% to 90.25%** provides stronger customer-review classification while preserving a direct comparison with the classical baseline.
+
+The ticket-routing capability can support faster assignment of customer issues into queues such as delivery, product quality, refunds/returns, and general support.
+
+Together, these capabilities can support:
+
+- more accurate customer-sentiment monitoring
+- faster support-ticket triage
+- product-quality issue identification
+- delivery-problem detection
+- refund and return routing
+- reduced manual review of customer text
+
+### Cost vs Accuracy Trade-off
+
+DistilBERT improved sentiment accuracy by approximately **3.07 percentage points**, but transformer models require more compute, memory, and execution time than TF-IDF + Logistic Regression.
+
+For lightweight or resource-constrained deployments, the Day 12 classical model remains a useful baseline. Where contextual understanding and higher sentiment accuracy are more important, the Day 13 DistilBERT model provides the stronger result.
+
+### Limitations and Open Blockers
+
+The support-ticket labels were derived from review text rather than a dedicated labeled support-ticket dataset. A production routing model should be trained and validated using real support tickets and operational support categories.
+
+Transformer models are also more computationally expensive than the Day 12 classical NLP pipeline, so deployment cost and latency should be evaluated before replacing the simpler model in every environment.
+
+### Day 13 Conclusion
+
+Day 13 successfully upgraded RetailMind's NLP capability from TF-IDF-based sentiment analysis to contextual transformer-based text intelligence.
+
+DistilBERT achieved **90.25% sentiment accuracy**, improving on the Day 12 baseline by **3.07 percentage points**. The same NLP increment also added a support-ticket router with **79.00% overall accuracy**, extending RetailMind from review analysis into automated customer-support triage.
+

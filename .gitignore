@@ -8,3 +8,7 @@ __pycache__/
 git_upload.ipynb
 
 *.pt
+
+# Large transformer model weights
+models/day13_bert_sentiment/tf_model.h5
+models/day13_bert_ticket_router/tf_model.h5
